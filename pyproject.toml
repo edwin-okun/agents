@@ -5,6 +5,7 @@ description = "Buidling AI Agents"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "fastapi-pagination>=0.15.8",
     "fastapi[standard]>=0.128.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",

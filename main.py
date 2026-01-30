@@ -3,9 +3,11 @@ from typing import AsyncGenerator
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_pagination import add_pagination
 from tortoise.contrib.fastapi import RegisterTortoise
 
 from app.api.v1.ai import router as ai_router
+from app.api.v1.payments import router as payments_router
 from app.core.database import TORTOISE_ORM
 
 
@@ -34,8 +36,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+add_pagination(app)
 
 app.include_router(ai_router)
+app.include_router(payments_router)
 
 # Middleware
 # CORS

@@ -1,4 +1,5 @@
 from tortoise import Model, fields
+from tortoise.contrib.pydantic import pydantic_model_creator
 
 from app.models.enums.payments import CountryCode, PaymentDirection
 
@@ -29,3 +30,6 @@ class EndUserPayment(Model):
     class Meta:
         table = "end_user_payments"
         unique_together = ["consumer_phone_number", "transaction_id"]
+
+
+EndUserPaymentSchema = pydantic_model_creator(EndUserPayment)

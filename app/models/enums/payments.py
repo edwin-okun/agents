@@ -4,6 +4,8 @@ from enum import StrEnum
 class PaymentDirection(StrEnum):
     OUTGOING = "outgoing"
     INCOMING = "incoming"
+    NEUTRAL = "neutral"
+    UNKNOWN = "unknown"
 
 
 class CountryCode(StrEnum):
