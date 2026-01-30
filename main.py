@@ -9,6 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from tortoise.contrib.fastapi import RegisterTortoise
 
 from app.api.v1.ai import router as ai_router
+from app.api.v1.financial import router as financial_router
 from app.api.v1.payments import router as payments_router
 from app.core.database import TORTOISE_ORM
 from app.core.exception_handlers import (
@@ -55,6 +56,7 @@ app.add_exception_handler(Exception, general_exception_handler)
 
 # Routers
 app.include_router(ai_router)
+app.include_router(financial_router)
 app.include_router(payments_router)
 
 # Middleware
