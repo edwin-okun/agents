@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from app.services.ai_service import AIService
-from app.schemas.ai_schema import AIPayloadSchema, AIResponseSchema
 
+from app.schemas.ai_schema import AIPayloadSchema, AIResponseSchema
+from app.services.ai_service import AIService
 
 router = APIRouter(prefix="/ai")
 

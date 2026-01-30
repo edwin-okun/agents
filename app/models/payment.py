@@ -1,5 +1,6 @@
 from tortoise import Model, fields
-from app.models.enums.payments import PaymentDirection, CountryCode
+
+from app.models.enums.payments import CountryCode, PaymentDirection
 
 
 class EndUserPayment(Model):

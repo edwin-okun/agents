@@ -1,9 +1,11 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-from app.api.v1.ai import router as ai_router
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from tortoise.contrib.fastapi import RegisterTortoise
+
+from app.api.v1.ai import router as ai_router
 from app.core.database import TORTOISE_ORM
 
 
