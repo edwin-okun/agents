@@ -7,6 +7,7 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi-pagination>=0.15.8",
     "fastapi[standard]>=0.128.0",
+    "openai>=2.16.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
     "tortoise-orm[asyncpg]>=0.25.3",
