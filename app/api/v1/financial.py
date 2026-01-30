@@ -5,7 +5,7 @@ Financial Agent API Endpoints
 from fastapi import APIRouter, Depends
 
 from app.schemas.financial_schema import (
-    FinancialAnswerSchema,
+    FinancialAnswerTextSchema,
     FinancialQuestionSchema,
 )
 from app.services.financial_agent_service import FinancialAgentService
@@ -13,7 +13,7 @@ from app.services.financial_agent_service import FinancialAgentService
 router = APIRouter(prefix="/financial", tags=["Financial Agent"])
 
 
-@router.post("/ask", response_model=FinancialAnswerSchema)
+@router.post("/ask", response_model=FinancialAnswerTextSchema)
 async def ask_financial_question(
     payload: FinancialQuestionSchema,
     agent_service: FinancialAgentService = Depends(),
@@ -30,7 +30,10 @@ async def ask_financial_question(
     - "Show me my spending trends over the last year"
     - "How much have I paid to Safaricom?"
     """
-    return await agent_service.ask(
+    response = await agent_service.ask(
         question=payload.question,
         consumer_phone_number=payload.consumer_phone_number,
+    )
+    return FinancialAnswerTextSchema(
+        answer=await agent_service.format_response_naturally(response)
     )

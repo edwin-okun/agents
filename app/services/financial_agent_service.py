@@ -181,6 +181,91 @@ class FinancialAgentService:
                 confidence="low",
             )
 
+    async def format_response_naturally(self, response: FinancialAnswerSchema) -> str:
+        """
+        Use AI to convert a FinancialAnswerSchema into natural, conversational English.
+
+        This method takes the structured response (with tool calls and results)
+        and asks the AI to rewrite it as natural, human-friendly text without
+        any JSON or technical formatting.
+
+        Args:
+            response: The FinancialAnswerSchema object to format
+
+        Returns:
+            Natural language text formatted by the AI
+
+        Examples:
+            >>> response = await agent.ask("How much did I spend this month?")
+            >>> natural_text = await agent.format_response_naturally(response)
+            >>> print(natural_text)
+
+            You spent 45,000 KES this month across 23 transactions. This includes
+            payments to various recipients, with your largest expense being...
+        """
+        # Build a summary of tool calls and results for the AI
+        tool_summary = []
+        for i, tool_call in enumerate(response.tool_calls, 1):
+            tool_info = f"Tool {i}: {tool_call.tool}\n"
+            tool_info += f"Parameters: {json.dumps(tool_call.params, indent=2)}\n"
+            tool_info += f"Result: {json.dumps(self._serialize_result(tool_call.result), indent=2)}"
+            tool_summary.append(tool_info)
+
+        tools_text = (
+            "\n\n".join(tool_summary) if tool_summary else "No tools were used."
+        )
+
+        # Create a prompt for the AI to format naturally
+        formatting_prompt = f"""You are a helpful financial assistant. I have some financial data that needs to be presented to a user in a natural, conversational way.
+
+Here is the structured data:
+
+ORIGINAL ANSWER:
+{response.answer}
+
+CONFIDENCE LEVEL:
+{response.confidence}
+
+TOOL CALLS AND RESULTS:
+{tools_text}
+
+Please rewrite this information as natural, conversational English text. Follow these guidelines:
+
+1. Write in a friendly, professional tone
+2. Use complete sentences and paragraphs
+3. Include specific numbers and details from the tool results
+4. Don't use JSON format or technical jargon
+5. Don't mention "tools" or "parameters" - just present the information naturally
+6. If there are multiple pieces of information, organize them logically
+7. Round large numbers appropriately (e.g., "22.9 million KES" instead of "22,916,692.00 KES")
+8. Use bullet points or numbered lists if it makes the information clearer
+9. End with a helpful summary or insight if appropriate
+
+Write ONLY the natural language response, nothing else."""
+
+        try:
+            # Call AI to format naturally
+            ai_response = await self.client.chat.completions.create(
+                model=settings.deepseek_model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful financial assistant that presents financial data in clear, natural language.",
+                    },
+                    {"role": "user", "content": formatting_prompt},
+                ],
+                temperature=0.7,  # Higher temperature for more natural language
+            )
+
+            natural_text = ai_response.choices[0].message.content.strip()
+            logger.info("Successfully formatted response naturally using AI")
+            return natural_text
+
+        except Exception as e:
+            logger.error(f"Failed to format response naturally: {e}", exc_info=True)
+            # Fallback to the original answer if AI formatting fails
+            return f"{response.answer}\n\n(Note: Enhanced formatting unavailable)"
+
     async def _execute_tool(self, tool_name: str, params: dict[str, Any]) -> Any:
         """
         Execute a tool by name with given parameters.

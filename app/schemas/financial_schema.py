@@ -45,3 +45,11 @@ class FinancialAnswerSchema(BaseModel):
         default="medium",
         description="Confidence level of the answer: high, medium, or low",
     )
+
+
+class FinancialAnswerTextSchema(BaseModel):
+    """Response schema for financial questions."""
+
+    answer: str = Field(
+        ..., description="Natural language answer to the user's question"
+    )
