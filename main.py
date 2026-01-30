@@ -1,6 +1,23 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.ai import router as ai_router
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+from tortoise.contrib.fastapi import RegisterTortoise
+from app.core.database import TORTOISE_ORM
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    async with RegisterTortoise(
+        app=app,
+        config=TORTOISE_ORM,
+        # generate_schemas=True,
+    ):
+        # db connected
+        yield
+        # app teardown
+
 
 app = FastAPI(
     title="AI Agent",
@@ -12,6 +29,7 @@ app = FastAPI(
         "displayRequestDuration": True,
         "docExpansion": "none",
     },
+    lifespan=lifespan,
 )
 
 

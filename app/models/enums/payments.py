@@ -1,8 +1,10 @@
 from enum import StrEnum
 
+
 class PaymentDirection(StrEnum):
-    OUTGOING = "OUTGOING"
-    INCOMING = "INCOMING"
+    OUTGOING = "outgoing"
+    INCOMING = "incoming"
+
 
 class CountryCode(StrEnum):
     KE = "KE"

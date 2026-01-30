@@ -1,6 +1,7 @@
 from tortoise import Model, fields
 from app.models.enums.payments import PaymentDirection, CountryCode
 
+
 class EndUserPayment(Model):
     """
     Tracks payments made by end-users or consumers of the app.
